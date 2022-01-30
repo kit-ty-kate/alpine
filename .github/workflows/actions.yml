@@ -1,8 +1,7 @@
 name: actions
 on:
   push:
-  schedule:
-    - cron: '0 0 * * 0'
+  workflow_dispatch:
 jobs:
   alpine:
     runs-on: ubuntu-latest
