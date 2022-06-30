@@ -10,7 +10,7 @@ jobs:
         QEMU_VER: [v6.1.0-1]
         DOCKER_REPO: [docker.io/asymworks/multiarch-alpine]
         LATEST_VERSION: [v3.15]
-        VERSION: [v3.12, v3.13, v3.14, v3.15, edge]
+        VERSION: [v3.14, v3.15, v3.16, edge]
         TAG_ARCH: [x86, x86_64, i386, amd64, armhf, aarch64, arm64, armv7, ppc64le]
         include:
           - {ARCH: x86,      QEMU_ARCH: i386,      TAG_ARCH: x86}
