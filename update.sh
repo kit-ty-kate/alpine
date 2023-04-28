@@ -3,7 +3,7 @@
 # A POSIX variable
 OPTIND=1 # Reset in case getopts has been used previously in the shell.
 
-while getopts "a:v:q:u:d:t:l:" opt; do
+while getopts "a:v:q:u:d:g:t:l:" opt; do
     case "$opt" in
     a)  ARCH=$OPTARG
         ;;
@@ -88,7 +88,7 @@ fi
 
 # build
 docker build -t ${DOCKER_REPO}:${TAG_ARCH}-${VERSION} .
-if [ "$GHCR_REPO" != "" ]; then
+if [ -n "$GHCR_REPO" ]; then
     docker tag ${DOCKER_REPO}:${TAG_ARCH}-${VERSION} ${GHCR_REPO}:${TAG_ARCH}-${VERSION}
 fi
 if [ "$VERSION" == "$LATEST_VERSION" ]; then
