@@ -52,6 +52,7 @@ jobs:
             ghcr.io/${{ github.repository }}
 
       - name: Push Docker images
+        if: github.ref == 'refs/heads/master'
         run: |
           docker push -a ${{ matrix.DOCKER_REPO }}
           docker push -a ${{ matrix.GH_REPO }}
