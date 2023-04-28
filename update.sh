@@ -15,6 +15,8 @@ while getopts "a:v:q:u:d:t:l:" opt; do
         ;;
     d)  DOCKER_REPO=$OPTARG
         ;;
+    g)  GHCR_REPO=$OPTARG
+        ;;
     t)  TAG_ARCH=$OPTARG
         ;;
     l)  LATEST_VERSION=$OPTARG
@@ -86,6 +88,9 @@ fi
 
 # build
 docker build -t ${DOCKER_REPO}:${TAG_ARCH}-${VERSION} .
+if [ "$GHCR_REPO" != "" ]; then
+    docker tag ${DOCKER_REPO}:${TAG_ARCH}-${VERSION} ${GHCR_REPO}:${TAG_ARCH}-${VERSION}
+fi
 if [ "$VERSION" == "$LATEST_VERSION" ]; then
     docker tag ${DOCKER_REPO}:${TAG_ARCH}-${VERSION} ${DOCKER_REPO}:${TAG_ARCH}-latest-stable
 fi
