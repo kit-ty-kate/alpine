@@ -9,8 +9,9 @@ jobs:
       matrix:
         QEMU_VER: [v6.1.0-1]
         DOCKER_REPO: [docker.io/asymworks/multiarch-alpine]
+        GH_REPO: [ghcr.io/asymworks/multiarch-alpine]
         LATEST_VERSION: [v3.15]
-        VERSION: [v3.14, v3.15, v3.16, edge]
+        VERSION: [v3.14, v3.15, v3.16, v3.17, edge]
         TAG_ARCH: [x86, x86_64, i386, amd64, armhf, aarch64, arm64, armv7, ppc64le]
         include:
           - {ARCH: x86,      QEMU_ARCH: i386,      TAG_ARCH: x86}
@@ -28,8 +29,13 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y --no-install-recommends qemu-user-static
           sudo ./update.sh -a ${{ matrix.ARCH }} -v ${{ matrix.VERSION }} -q ${{ matrix.QEMU_ARCH }} -u ${{ matrix.QEMU_VER }} -d ${{ matrix.DOCKER_REPO }} -t ${{ matrix.TAG_ARCH }} -l ${{ matrix.LATEST_VERSION }}
-      - name: Publish
+      - name: Build and Publish Packages (Docker Hub)
         if: github.ref == 'refs/heads/master'
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
           docker push -a ${{ matrix.DOCKER_REPO }}
+      - name: Build and Publish Packages (GitHub)
+        if: github.ref == 'refs/heads/master'
+        run: |
+          docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+          docker push -a ${{ matrix.GH_REPO }}
