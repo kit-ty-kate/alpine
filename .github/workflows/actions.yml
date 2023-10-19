@@ -11,7 +11,7 @@ jobs:
         DOCKER_REPO: [docker.io/asymworks/multiarch-alpine]
         GHCR_REPO: [ghcr.io/asymworks/multiarch-alpine]
         LATEST_VERSION: [v3.15]
-        VERSION: [v3.14, v3.15, v3.16, v3.17, edge]
+        VERSION: [v3.15, v3.16, v3.17, v3.18, edge]
         TAG_ARCH: [x86, x86_64, i386, amd64, armhf, aarch64, arm64, armv7, ppc64le]
         include:
           - {ARCH: x86,      QEMU_ARCH: i386,      TAG_ARCH: x86}
