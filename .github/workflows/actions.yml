@@ -8,11 +8,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        QEMU_VER: [v6.1.0-1]
+        QEMU_VER: [v7.2.0-1]
         DOCKER_REPO: [docker.io/multiarch/alpine]
-        LATEST_VERSION: [v3.14]
-        VERSION: [v3.11, v3.12, v3.13, v3.14, edge]
-        TAG_ARCH: [x86, x86_64, i386, amd64, armhf, aarch64, arm64, armv7, ppc64le, s390x]
+        LATEST_VERSION: [v3.20]
+        VERSION: [v3.11, v3.12, v3.13, v3.14, v3.15, v3.16, v3.17, v3.18, v3.19, v3.20, edge]
+        TAG_ARCH: [x86, x86_64, i386, amd64, armhf, aarch64, arm64, armv7, ppc64le, s390x, riscv64]
         include:
           - {ARCH: x86,      QEMU_ARCH: i386,      TAG_ARCH: x86}
           - {ARCH: x86_64,   QEMU_ARCH: x86_64,    TAG_ARCH: x86_64}
@@ -24,6 +24,17 @@ jobs:
           - {ARCH: armv7,    QEMU_ARCH: arm,       TAG_ARCH: armv7}
           - {ARCH: ppc64le,  QEMU_ARCH: ppc64le,   TAG_ARCH: ppc64le}
           - {ARCH: s390x,    QEMU_ARCH: s390x,     TAG_ARCH: s390x}
+          - {ARCH: riscv64,  QEMU_ARCH: riscv64,   TAG_ARCH: riscv64}
+        exclude:
+          - {TAG_ARCH: riscv64, VERSION: v3.11}
+          - {TAG_ARCH: riscv64, VERSION: v3.12}
+          - {TAG_ARCH: riscv64, VERSION: v3.13}
+          - {TAG_ARCH: riscv64, VERSION: v3.14}
+          - {TAG_ARCH: riscv64, VERSION: v3.15}
+          - {TAG_ARCH: riscv64, VERSION: v3.16}
+          - {TAG_ARCH: riscv64, VERSION: v3.17}
+          - {TAG_ARCH: riscv64, VERSION: v3.18}
+          - {TAG_ARCH: riscv64, VERSION: v3.19}
     steps:
       - uses: actions/checkout@v2
       - name: Build
