@@ -1,8 +1,7 @@
 name: actions
 on:
   push:
-  schedule:
-    - cron: '0 0 * * 0'
+  workflow_dispatch:
 jobs:
   alpine:
     runs-on: ubuntu-latest
@@ -10,6 +9,7 @@ jobs:
       matrix:
         QEMU_VER: [v6.1.0-1]
         DOCKER_REPO: [docker.io/multiarch/alpine]
+        GHCR_REPO: [ghcr.io/asymworks/multiarch-alpine]
         LATEST_VERSION: [v3.14]
         VERSION: [v3.11, v3.12, v3.13, v3.14, edge]
         TAG_ARCH: [x86, x86_64, i386, amd64, armhf, aarch64, arm64, armv7, ppc64le, s390x]
@@ -29,9 +29,31 @@ jobs:
       - name: Build
         run: |
           sudo apt-get update && sudo apt-get install -y --no-install-recommends qemu-user-static
-          sudo ./update.sh -a ${{ matrix.ARCH }} -v ${{ matrix.VERSION }} -q ${{ matrix.QEMU_ARCH }} -u ${{ matrix.QEMU_VER }} -d ${{ matrix.DOCKER_REPO }} -t ${{ matrix.TAG_ARCH }} -l ${{ matrix.LATEST_VERSION }}
-      - name: Publish
+          sudo ./update.sh -a ${{ matrix.ARCH }} -v ${{ matrix.VERSION }} -q ${{ matrix.QEMU_ARCH }} -u ${{ matrix.QEMU_VER }} -d ${{ matrix.DOCKER_REPO }} -g ${{ matrix.GHCR_REPO }} -t ${{ matrix.TAG_ARCH }} -l ${{ matrix.LATEST_VERSION }}
+      
+      - name: Log in to Docker Hub
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+      
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: |
+            asymworks/multiarch-alpine
+            ghcr.io/${{ github.repository }}
+
+      - name: Push Docker images
         if: github.ref == 'refs/heads/master'
         run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
           docker push -a ${{ matrix.DOCKER_REPO }}
+          docker push -a ${{ matrix.GHCR_REPO }}
