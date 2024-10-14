@@ -3,7 +3,7 @@
 # A POSIX variable
 OPTIND=1 # Reset in case getopts has been used previously in the shell.
 
-while getopts "a:v:q:u:d:g:t:l:" opt; do
+while getopts "a:v:q:u:g:t:l:" opt; do
     case "$opt" in
     a)  ARCH=$OPTARG
         ;;
@@ -12,8 +12,6 @@ while getopts "a:v:q:u:d:g:t:l:" opt; do
     q)  QEMU_ARCH=$OPTARG
         ;;
     u)  QEMU_VER=$OPTARG
-        ;;
-    d)  DOCKER_REPO=$OPTARG
         ;;
     g)  GHCR_REPO=$OPTARG
         ;;
@@ -74,7 +72,7 @@ cat > Dockerfile <<EOF
 FROM scratch
 ADD rootfs.tar.xz /
 
-ENV ARCH=${ARCH} ALPINE_REL=${VERSION} DOCKER_REPO=${DOCKER_REPO} ALPINE_MIRROR=${MIRROR}
+ENV ARCH=${ARCH} ALPINE_REL=${VERSION} ALPINE_MIRROR=${MIRROR}
 EOF
 
 # add qemu-user-static binary
@@ -87,11 +85,5 @@ EOF
 fi
 
 # build
-docker build -t ${DOCKER_REPO}:${TAG_ARCH}-${VERSION} .
-if [ -n "$GHCR_REPO" ]; then
-    docker tag ${DOCKER_REPO}:${TAG_ARCH}-${VERSION} ${GHCR_REPO}:${TAG_ARCH}-${VERSION}
-fi
-if [ "$VERSION" == "$LATEST_VERSION" ]; then
-    docker tag ${DOCKER_REPO}:${TAG_ARCH}-${VERSION} ${DOCKER_REPO}:${TAG_ARCH}-latest-stable
-fi
-docker run --rm ${DOCKER_REPO}:${TAG_ARCH}-${VERSION} /bin/sh -ec "echo Hello from Alpine !; set -x; uname -a; cat /etc/alpine-release"
+docker build -t ${GHCR_REPO}:${TAG_ARCH}-${VERSION} .
+docker run --rm ${GHCR_REPO}:${TAG_ARCH}-${VERSION} /bin/sh -ec "echo Hello from Alpine !; set -x; uname -a; cat /etc/alpine-release"
