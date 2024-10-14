@@ -3,7 +3,7 @@
 # A POSIX variable
 OPTIND=1 # Reset in case getopts has been used previously in the shell.
 
-while getopts "a:v:q:u:g:t:l:" opt; do
+while getopts "a:v:q:u:g:t:" opt; do
     case "$opt" in
     a)  ARCH=$OPTARG
         ;;
@@ -16,8 +16,6 @@ while getopts "a:v:q:u:g:t:l:" opt; do
     g)  GHCR_REPO=$OPTARG
         ;;
     t)  TAG_ARCH=$OPTARG
-        ;;
-    l)  LATEST_VERSION=$OPTARG
         ;;
     esac
 done

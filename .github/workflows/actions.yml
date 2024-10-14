@@ -9,8 +9,7 @@ jobs:
       matrix:
         QEMU_VER: [v7.2.0-1]
         GHCR_REPO: [ghcr.io/kit-ty-kate/alpine]
-        LATEST_VERSION: [v3.20]
-        VERSION: [v3.11, v3.12, v3.13, v3.14, v3.15, v3.16, v3.17, v3.18, v3.19, v3.20, edge]
+        VERSION: [v3.20, edge]
         TAG_ARCH: [x86, x86_64, i386, amd64, armhf, aarch64, arm64, armv7, ppc64le, s390x, riscv64]
         include:
           - {ARCH: x86,      QEMU_ARCH: i386,      TAG_ARCH: x86}
@@ -24,22 +23,12 @@ jobs:
           - {ARCH: ppc64le,  QEMU_ARCH: ppc64le,   TAG_ARCH: ppc64le}
           - {ARCH: s390x,    QEMU_ARCH: s390x,     TAG_ARCH: s390x}
           - {ARCH: riscv64,  QEMU_ARCH: riscv64,   TAG_ARCH: riscv64}
-        exclude:
-          - {TAG_ARCH: riscv64, VERSION: v3.11}
-          - {TAG_ARCH: riscv64, VERSION: v3.12}
-          - {TAG_ARCH: riscv64, VERSION: v3.13}
-          - {TAG_ARCH: riscv64, VERSION: v3.14}
-          - {TAG_ARCH: riscv64, VERSION: v3.15}
-          - {TAG_ARCH: riscv64, VERSION: v3.16}
-          - {TAG_ARCH: riscv64, VERSION: v3.17}
-          - {TAG_ARCH: riscv64, VERSION: v3.18}
-          - {TAG_ARCH: riscv64, VERSION: v3.19}
     steps:
       - uses: actions/checkout@v2
       - name: Build
         run: |
           sudo apt-get update && sudo apt-get install -y --no-install-recommends qemu-user-static
-          sudo ./update.sh -a ${{ matrix.ARCH }} -v ${{ matrix.VERSION }} -q ${{ matrix.QEMU_ARCH }} -u ${{ matrix.QEMU_VER }} -g ${{ matrix.GHCR_REPO }} -t ${{ matrix.TAG_ARCH }} -l ${{ matrix.LATEST_VERSION }}
+          sudo ./update.sh -a ${{ matrix.ARCH }} -v ${{ matrix.VERSION }} -q ${{ matrix.QEMU_ARCH }} -u ${{ matrix.QEMU_VER }} -g ${{ matrix.GHCR_REPO }} -t ${{ matrix.TAG_ARCH }}
       
       - name: Log in to the Container registry
         uses: docker/login-action@v2
